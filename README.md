@@ -12,6 +12,22 @@ docker exec -it pg bash
 psql --dbname=greenlight --username=user
 ```
 
+While connected and logged in, you can use the following meta commands.
+```bash
+# list all tables
+\dt
+# show table structure
+\d movies
+```
+
+Migrate the database.
+```bash
+migrate create -seq -ext=.sql -dir=./migrations create_movies_table
+migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable up
+migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable goto 1
+migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable version
+```
+
 Run the application.
 ```bash
 go run ./cmd/api
