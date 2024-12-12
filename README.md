@@ -35,8 +35,14 @@ go run ./cmd/api
 
 Send requests to the application.
 ```bash
-# valid request
+# create a movie, valid request
 curl -iX POST -d '{"title":"Moana","year":2016,"runtime":"107 mins","genres":["animation","adventure"]}' localhost:4000/v1/movies
-# invalid request
+# create a move, invalid request
 curl -iX POST -d '{"title":"","year":1000,"runtime":"-123 mins","genres":["sci-fi","sci-fi"]}' localhost:4000/v1/movies
+# get a specific movie
+curl -iX GET localhost:4000/v1/movies/1
+# update a specific movie
+curl -iX PUT -d '{"title":"Moana","year":2016,"runtime":"107 mins","genres":["animation","adventure","musical"]}' localhost:4000/v1/movies/1
+# delete a specific movie
+curl -iX DELETE localhost:4000/v1/movies/1
 ```
