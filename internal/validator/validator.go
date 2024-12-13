@@ -43,6 +43,10 @@ func NotBlank(value string) bool {
 	return strings.TrimSpace(value) != ""
 }
 
+func MinChars(value string, n int) bool {
+	return utf8.RuneCountInString(value) >= n
+}
+
 func MaxChars(value string, n int) bool {
 	return utf8.RuneCountInString(value) <= n
 }

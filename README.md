@@ -26,6 +26,7 @@ migrate create -seq -ext=.sql -dir=./migrations create_movies_table
 migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable up
 migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable goto 1
 migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable version
+migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable force 1
 ```
 
 Run the application.
@@ -53,4 +54,8 @@ curl -iX GET localhost:4000/v1/movies
 curl -iX GET "localhost:4000/v1/movies?genres=animation,adventure&sort=-year"
 # list all movies with pagination
 curl -iX GET "localhost:4000/v1/movies?page_size=2&page=2"
+# create a user, valid request
+curl -iX POST -d '{"name": "Alice Smith", "email": "alice@example.com", "password": "pa55word"}' localhost:4000/v1/users
+# create a user, invalid request
+curl -iX POST -d '{"name": "", "email": "bob@example.", "password": "pass"}' localhost:4000/v1/users
 ```
