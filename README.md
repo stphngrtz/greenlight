@@ -47,4 +47,10 @@ curl -iX PUT -d '{"title":"Moana","year":2016,"runtime":"107 mins","genres":["an
 curl -iX PATCH -d '{"year":2015}' localhost:4000/v1/movies/1
 # delete a specific movie
 curl -iX DELETE localhost:4000/v1/movies/1
+# list all movies
+curl -iX GET localhost:4000/v1/movies
+# list all movies of a specific gerne, sorted by year (descending)
+curl -iX GET "localhost:4000/v1/movies?genres=animation,adventure&sort=-year"
+# list all movies with pagination
+curl -iX GET "localhost:4000/v1/movies?page_size=2&page=2"
 ```

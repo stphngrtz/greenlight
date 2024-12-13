@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -29,7 +30,7 @@ type envelope map[string]any
 // Sends a JSON response with a HTTP status code, some data and a header map containing
 // any additional HTTP headers we want to include.
 func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
-	j, err := json.Marshal(data) // json.MarshalIndent(data, "", "\t")
+	j, err := json.MarshalIndent(data, "", "\t") // json.Marshal(data) for some more performance but less readability in terminal
 	if err != nil {
 		return err
 	}
@@ -92,4 +93,33 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, destina
 	}
 
 	return nil
+}
+
+func (app *application) readString(qs url.Values, key string, defaultValue string) string {
+	s := qs.Get(key)
+	if s == "" {
+		return defaultValue
+	}
+	return s
+}
+
+func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
+	csv := qs.Get(key)
+	if csv == "" {
+		return defaultValue
+	}
+	return strings.Split(csv, ",")
+}
+
+func (app *application) readInt(qs url.Values, key string, defaultValue int) (int, error) {
+	s := qs.Get(key)
+	if s == "" {
+		return defaultValue, nil
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return defaultValue, err
+	}
+	return i, nil
 }
