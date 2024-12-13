@@ -43,6 +43,8 @@ curl -iX POST -d '{"title":"","year":1000,"runtime":"-123 mins","genres":["sci-f
 curl -iX GET localhost:4000/v1/movies/1
 # update a specific movie
 curl -iX PUT -d '{"title":"Moana","year":2016,"runtime":"107 mins","genres":["animation","adventure","musical"]}' localhost:4000/v1/movies/1
+# partial update a specific movie
+curl -iX PATCH -d '{"year":2015}' localhost:4000/v1/movies/1
 # delete a specific movie
 curl -iX DELETE localhost:4000/v1/movies/1
 ```
