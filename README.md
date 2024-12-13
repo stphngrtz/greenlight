@@ -58,4 +58,6 @@ curl -iX GET "localhost:4000/v1/movies?page_size=2&page=2"
 curl -iX POST -d '{"name": "Alice Smith", "email": "alice@example.com", "password": "pa55word"}' localhost:4000/v1/users
 # create a user, invalid request
 curl -iX POST -d '{"name": "", "email": "bob@example.", "password": "pass"}' localhost:4000/v1/users
+# activate a user
+curl -iX PUT -d '{"token": "U4QLDCL3XXEND53LIBH2S7FILI"}' localhost:4000/v1/users/activated
 ```
