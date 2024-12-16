@@ -60,4 +60,8 @@ curl -iX POST -d '{"name": "Alice Smith", "email": "alice@example.com", "passwor
 curl -iX POST -d '{"name": "", "email": "bob@example.", "password": "pass"}' localhost:4000/v1/users
 # activate a user
 curl -iX PUT -d '{"token": "U4QLDCL3XXEND53LIBH2S7FILI"}' localhost:4000/v1/users/activated
+# request a token
+curl -iX POST -d '{"email": "alice@example.com", "password": "pa55word"}' localhost:4000/v1/tokens/authentication
+# send request with token
+curl -iX GET -H "Authorization: Bearer KDAX24GYLMKZCHNL3HQUSXQ56I" localhost:4000/v1/healthcheck
 ```
