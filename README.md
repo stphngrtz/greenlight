@@ -27,11 +27,23 @@ migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432
 migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable goto 1
 migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable version
 migrate -path=./migrations -database=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable force 1
+# or
+make db/migrations/new name=create_movies_table
+make db/migrations/up
 ```
 
 Run the application.
 ```bash
-go run ./cmd/api
+go run ./cmd/api -db-dsn=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable
+# or
+make run/api
+```
+
+Build & run the application.
+```bash
+make build/api
+./bin/api -version
+./bin/api -db-dsn=postgres://user:my-secret-pw@localhost:5432/greenlight?sslmode=disable
 ```
 
 Send requests to the application.
