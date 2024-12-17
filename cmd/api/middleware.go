@@ -2,9 +2,11 @@ package main
 
 import (
 	"errors"
+	"expvar"
 	"fmt"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -185,4 +187,62 @@ func (app *application) enableCORS(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func (app *application) metrics(next http.Handler) http.Handler {
+	var (
+		totalRequestsReceived           = expvar.NewInt("total_requests_received")
+		totalresponsesSent              = expvar.NewInt("total_responses_sent")
+		totalProcessingTimeMicroseconds = expvar.NewInt("total_processing_time_us")
+		totalResponsesSentByStatus      = expvar.NewMap("total_responses_sent_by_status")
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		totalRequestsReceived.Add(1)
+
+		mw := newMetricsResponseWrite(w)
+		next.ServeHTTP(mw, r)
+
+		totalresponsesSent.Add(1)
+		totalResponsesSentByStatus.Add(strconv.Itoa(mw.statusCode), 1)
+
+		duration := time.Since(start).Microseconds()
+		totalProcessingTimeMicroseconds.Add(duration)
+	})
+}
+
+type metricsResponseWriter struct {
+	wrapped       http.ResponseWriter
+	statusCode    int
+	headerWritten bool
+}
+
+func newMetricsResponseWrite(w http.ResponseWriter) *metricsResponseWriter {
+	return &metricsResponseWriter{
+		wrapped:    w,
+		statusCode: http.StatusOK,
+	}
+}
+
+func (mrw *metricsResponseWriter) Header() http.Header {
+	return mrw.wrapped.Header()
+}
+
+func (mrw *metricsResponseWriter) WriteHeader(statusCode int) {
+	mrw.wrapped.WriteHeader(statusCode)
+
+	if !mrw.headerWritten {
+		mrw.statusCode = statusCode
+		mrw.headerWritten = true
+	}
+}
+
+func (mrw *metricsResponseWriter) Write(b []byte) (int, error) {
+	mrw.headerWritten = true
+	return mrw.wrapped.Write(b)
+}
+
+func (mrw *metricsResponseWriter) Unwrap() http.ResponseWriter {
+	return mrw.wrapped
 }
